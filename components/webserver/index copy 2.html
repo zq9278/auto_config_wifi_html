@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ESP32 OV2460 Simple Example</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #181818;
+            color: #EFEFEF;
+            font-size: 16px;
+        }
+
+        .input-group {
+            margin: 10px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        select, input[type=range] {
+            width: 100%;
+        }
+
+        .image-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="input-group">
+        <label for="framesize">Resolution</label>
+        <select id="framesize">
+            <option value="UXGA">UXGA (1600x1200)</option>
+            <option value="SVGA">SVGA (800x600)</option>
+            <option value="VGA">VGA (640x480)</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label for="brightness">Brightness</label>
+        <input type="range" id="brightness" min="-2" max="2" value="0">
+    </div>
+
+    <div class="image-container">
+        <img id="camera-image" src="" alt="Camera Stream">
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var framesize = document.getElementById('framesize');
+            var brightness = document.getElementById('brightness');
+            var cameraImage = document.getElementById('camera-image');
+
+            framesize.addEventListener('change', function () {
+                updateCameraSettings();
+            });
+
+            brightness.addEventListener('change', function () {
+                updateCameraSettings();
+            });
+
+            function updateCameraSettings() {
+                // 构建请求 URL
+                var url = `/update-settings?framesize=${framesize.value}&brightness=${brightness.value}`;
+                fetch(url)
+                    .then(response => response.text())
+                    .then(data => {
+                        console.log('Settings updated:', data);
+                        // 可能需要根据返回的数据更新图像 URL
+                        // cameraImage.src = '/path/to/new/image.jpg';
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+
+            // 初始化相机图像
+            // cameraImage.src = '/path/to/stream.jpg';
+        });
+    </script>
+</body>
+</html>
